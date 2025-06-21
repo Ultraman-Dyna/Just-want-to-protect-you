@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>君だけを守りたい - 歌词动画</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FF3A5E',
+            secondary: '#1E88E5',
+            dark: '#121212',
+            light: '#F5F5F5',
+            accent: '#FFD700',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .text-shadow-lg {
+        text-shadow: 0 4px 8px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
+      }
+      .text-shadow-glow {
+        text-shadow: 0 0 10px rgba(255,58,94,0.5), 0 0 20px rgba(255,58,94,0.3);
+      }
+      .animate-pulse-slow {
+        animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-explode {
+        animation: explode 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .animate-fall {
+        animation: fall 2s linear forwards;
+      }
+      .bg-gradient-radial {
+        background-image: radial-gradient(circle, var(--tw-gradient-stops));
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    @keyframes explode {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 0;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) rotate(360deg);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body class="bg-dark text-light min-h-screen overflow-x-hidden font-sans">
+  <!-- 音频控制器 -->
+  <div class="fixed top-4 right-4 z-50 bg-dark/80 backdrop-blur-md p-3 rounded-full shadow-lg flex items-center gap-3">
+    <button id="play-btn" class="text-light hover:text-primary transition-colors">
+      <i class="fa fa-play text-xl"></i>
+    </button>
+    <button id="pause-btn" class="text-light hover:text-primary transition-colors hidden">
+      <i class="fa fa-pause text-xl"></i>
+    </button>
+    <button id="volume-btn" class="text-light hover:text-primary transition-colors">
+      <i class="fa fa-volume-up text-xl"></i>
+    </button>
+    <div class="w-24 h-1 bg-gray-600 rounded-full overflow-hidden">
+      <div id="volume-slider" class="w-full h-full bg-primary cursor-pointer"></div>
+    </div>
+  </div>
+
+  <!-- 粒子背景容器 -->
+  <div id="particles-container" class="fixed inset-0 z-0"></div>
+
+  <!-- 主容器 -->
+  <main class="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 py-16">
+    <!-- 标题区域 -->
+    <div class="text-center mb-16 animate-explode">
+      <h1 class="text-[clamp(2.5rem,5vw,4rem)] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-4 tracking-tight text-shadow-glow">
+        君だけを守りたい
+      </h1>
+      <p class="text-[clamp(1rem,2vw,1.25rem)] text-gray-300 italic">
+        词/曲：高見沢俊彦
+      </p>
+    </div>
+
+    <!-- 歌词容器 -->
+    <div id="lyrics-container" class="w-full max-w-4xl mx-auto">
+      <!-- 前奏 -->
+      <div class="lyrics-section mb-12" data-section="intro">
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] opacity-0 transition-opacity duration-500 delay-300">
+          青空がある限り
+        </p>
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] opacity-0 transition-opacity duration-500 delay-600 ml-8">
+          <span class="word" data-effect="wave">风は時を運ぶよ</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] opacity-0 transition-opacity duration-500 delay-900">
+          勇気がある限り
+        </p>
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] opacity-0 transition-opacity duration-500 delay-1200 ml-8">
+          <span class="word" data-effect="wave">夢は必ず叶うよ</span>
+        </p>
+      </div>
+
+      <!-- 主歌1 -->
+      <div class="lyrics-section mb-12 opacity-0 transition-opacity duration-1000" data-section="verse1">
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] font-medium">
+          <span class="word" data-effect="glow">涙が</span> あふれるまま
+        </p>
+        <p class="lyrics-line text-[clamp(1.5rem,3vw,2rem)] font-bold mt-4 mb-2">
+          <span class="word" data-effect="explode">▶</span> <span class="word" data-effect="pulse">Hey!Hey!</span> <span class="word" data-effect="float">走り出せ</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.3rem,2.5vw,1.8rem)] font-semibold ml-8 mt-2">
+          <span class="word" data-effect="scale">赤い地平線の彼方</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.6rem,3vw,2.2rem)] font-extrabold text-primary mt-2 ml-12">
+          <span class="word" data-effect="blast">——明日があるのさ！</span>
+        </p>
+      </div>
+
+      <!-- 副歌1 -->
+      <div class="lyrics-section mb-12 opacity-0 transition-opacity duration-1000" data-section="chorus1">
+        <p class="lyrics-line text-[clamp(1.5rem,3vw,2rem)] font-bold mt-6 mb-2">
+          <span class="word" data-effect="stretch">誰よりも</span> <span class="word" data-effect="stretch">何よりも</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold text-primary mt-2">
+          <span class="word" data-effect="shield">♛</span> <span class="word" data-effect="glow">君だけを守りたい</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.5rem,3vw,2rem)] font-bold mt-6 mb-2">
+          <span class="word" data-effect="orbit">🌍</span> <span class="word" data-effect="stretch">いつまでもどこまでも</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold text-primary mt-2">
+          <span class="word" data-effect="shield">♛</span> <span class="word" data-effect="glow">君だけを守りたい</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2rem,5vw,3rem)] font-black text-accent mt-6 text-center">
+          <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span>
+        </p>
+      </div>
+
+      <!-- 主歌2 -->
+      <div class="lyrics-section mb-12 opacity-0 transition-opacity duration-1000" data-section="verse2">
+        <p class="lyrics-line text-[clamp(1.6rem,3vw,2.2rem)] font-extrabold text-secondary mt-6 mb-2 text-center">
+          <span class="word" data-effect="shatter">叫ぼう！</span> <span class="word" data-effect="glow">世界は終わらない</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.3rem,2.5vw,1.8rem)] font-semibold ml-8 mt-4">
+          <span class="word" data-effect="burn">🔥</span> <span class="word" data-effect="wave">哀しみがある限り</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] ml-12 mt-2">
+          → <span class="word" data-effect="float">人は夜に迷うよ</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.3rem,2.5vw,1.8rem)] font-semibold ml-8 mt-4">
+          <span class="word" data-effect="burn">🔥</span> <span class="word" data-effect="wave">あきらめない限り</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.2rem,2vw,1.5rem)] ml-12 mt-2">
+          → <span class="word" data-effect="float">夢は側にあるよ</span>
+        </p>
+      </div>
+
+      <!-- 桥段 -->
+      <div class="lyrics-section mb-12 opacity-0 transition-opacity duration-1000" data-section="bridge">
+        <p class="lyrics-line text-[clamp(1.5rem,3vw,2rem)] font-bold mt-6 mb-2">
+          <span class="word" data-effect="stretch">誰よりも</span> <span class="word" data-effect="stretch">何よりも</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold text-accent mt-2">
+          <span class="word" data-effect="heart">💝</span> <span class="word" data-effect="glow">愛だけを信じたい</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.5rem,3vw,2rem)] font-bold mt-6 mb-2">
+          <span class="word" data-effect="orbit">🌌</span> <span class="word" data-effect="stretch">いつまでもどこまでも</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold text-accent mt-2">
+          <span class="word" data-effect="heart">💝</span> <span class="word" data-effect="glow">愛だけを信じたい</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2rem,5vw,3rem)] font-black text-accent mt-6 text-center">
+          <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span>
+        </p>
+      </div>
+
+      <!-- 终章 -->
+      <div class="lyrics-section mb-12 opacity-0 transition-opacity duration-1000" data-section="outro">
+        <p class="lyrics-line text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold text-primary mt-8 mb-4 text-center">
+          <span class="word" data-effect="rain">ラララララ…</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2rem,5vw,3rem)] font-black text-primary mt-4 mb-8 text-center">
+          <span class="word" data-effect="blast">▶</span> <span class="word" data-effect="metal">君だけを守りたい</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.8rem,4vw,2.5rem)] font-extrabold text-primary mt-8 mb-4 text-center">
+          <span class="word" data-effect="rain">ラララララ…</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2rem,5vw,3rem)] font-black text-primary mt-4 mb-8 text-center">
+          <span class="word" data-effect="blast">▶</span> <span class="word" data-effect="metal">君だけを守りたい</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2.5rem,6vw,4rem)] font-black text-accent mt-12 mb-4 text-center">
+          <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2.5rem,6vw,4rem)] font-black text-secondary mt-8 mb-4 text-center">
+          <span class="word" data-effect="shatter">——もう一度！</span>
+        </p>
+        <p class="lyrics-line text-[clamp(2.5rem,6vw,4rem)] font-black text-accent mt-8 mb-4 text-center">
+          <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span> <span class="word" data-effect="echo">Wow</span>
+        </p>
+        <p class="lyrics-line text-[clamp(1.6rem,3vw,2.2rem)] font-extrabold text-secondary mt-6 mb-12 text-center">
+          <span class="word" data-effect="shatter">叫ぼう！</span> <span class="word" data-effect="cosmic">世界は終わらない</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="w-full max-w-4xl mx-auto mt-16">
+      <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-primary to-secondary w-0 transition-all duration-300"></div>
+      </div>
+      <div class="flex justify-between mt-2 text-sm text-gray-400">
+        <span id="current-time">0:00</span>
+        <span id="total-time">4:30</span>
+      </div>
+    </div>
+
+    <div id="visual-overlay" class="fixed inset-0 pointer-events-none z-50 opacity-0 transition-opacity duration-500"></div>
+  </main>
+
+  <script>
+    // 粒子背景
+    function createParticles() {
+      const container = document.getElementById('particles-container');
+      const particleCount = 100;
+
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        const size = Math.random() * 3 + 1;
+        const color = Math.random() > 0.5 ? '#FF3A5E' : '#1E88E5';
+
+        particle.style.position = 'absolute';
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.background = color;
+        particle.style.borderRadius = '50%';
+        particle.style.opacity = Math.random() * 0.5 + 0.2;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+        particle.style.transform = `translateY(${Math.random() * 100}vh)`;
+
+        container.appendChild(particle);
+      }
+    }
+
+    // 动画效果
+    function animateWave(element) {
+      const text = element.innerText;
+      element.innerHTML = '';
+
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.innerText = text[i];
+        span.style.display = 'inline-block';
+        span.style.animation = `wave 1s ease-in-out ${i * 0.1}s infinite alternate`;
+        element.appendChild(span);
+      }
+
+      element.classList.add('inline-block');
+    }
+
+    function animatePulse(element) {
+      element.style.animation = 'pulse 0.5s ease-in-out infinite alternate';
+    }
+
+    function animateFloat(element) {
+      element.style.animation = 'float 3s ease-in-out infinite';
+    }
+
+    function animateExplode(element) {
+      element.style.animation = 'explode 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }
+
+    function animateGlow(element) {
+      element.style.animation = 'glow 2s ease-in-out infinite alternate';
+    }
+
+    function animateScale(element) {
+      element.style.animation = 'scale 1s ease-in-out infinite alternate';
+    }
+
+    function animateBlast(element) {
+      element.style.animation = 'blast 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }
+
+    function animateShield(element) {
+      element.style.animation = 'shield 2s linear infinite';
+    }
+
+    function animateStretch(element) {
+      const text = element.innerText;
+      element.innerHTML = '';
+
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.innerText = text[i];
+        span.style.display = 'inline-block';
+        span.style.animation = `stretch 1s ease-in-out ${i * 0.1}s infinite alternate`;
+        element.appendChild(span);
+      }
+
+      element.classList.add('inline-block');
+    }
+
+    function animateOrbit(element) {
+      element.style.animation = 'orbit 5s linear infinite';
+    }
+
+    function animateEcho(element) {
+      element.style.animation = 'echo 1s ease-out infinite';
+    }
+
+    function animateBurn(element) {
+      element.style.animation = 'burn 2s ease-in-out infinite alternate';
+    }
+
+    function animateShatter(element) {
+      element.style.animation = 'shatter 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }
+
+    function animateHeart(element) {
+      element.style.animation = 'heart 1s ease-in-out infinite alternate';
+    }
+
+    function animateRain(element) {
+      const text = element.innerText;
+      element.innerHTML = '';
+
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.innerText = text[i];
+        span.style.display = 'inline-block';
+        span.style.animation = `rain 2s ease-in ${i * 0.1}s infinite`;
+        element.appendChild(span);
+      }
+
+      element.classList.add('inline-block');
+    }
+
+    function animateMetal(element) {
+      element.style.animation = 'metal 1s ease-in-out infinite alternate';
+    }
+
+    function animateCosmic(element) {
+      element.style.animation = 'cosmic 5s ease-in-out infinite alternate';
+    }
+
+    //关键帧
+    function addKeyframeAnimations() {
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes wave {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-10px); }
+        }
+
+        @keyframes glow {
+          0% { text-shadow: 0 0 5px rgba(255, 58, 94, 0.5); }
+          100% { text-shadow: 0 0 20px rgba(255, 58, 94, 0.8), 0 0 30px rgba(255, 58, 94, 0.6); }
+        }
+
+        @keyframes scale {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.05); }
+        }
+
+        @keyframes blast {
+          0% { transform: scale(0.8); opacity: 0; }
+          50% { transform: scale(1.2); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shield {
+          0% { transform: rotate(0deg); box-shadow: 0 0 10px rgba(255, 58, 94, 0.5); }
+          100% { transform: rotate(360deg); box-shadow: 0 0 20px rgba(255, 58, 94, 0.8); }
+        }
+
+        @keyframes stretch {
+          0% { transform: scaleY(1); }
+          100% { transform: scaleY(1.2); }
+        }
+
+        @keyframes orbit {
+          0% { transform: rotate(0deg) translateX(5px) rotate(0deg); }
+          100% { transform: rotate(360deg) translateX(5px) rotate(-360deg); }
+        }
+
+        @keyframes echo {
+          0% { transform: scale(1); opacity: 1; }
+          100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes burn {
+          0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+          100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6); }
+        }
+
+        @keyframes shatter {
+          0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
+          50% { transform: scale(1.2); opacity: 0.8; filter: blur(5px); }
+          100% { transform: scale(1); opacity: 1; filter: blur(0); }
+        }
+
+        @keyframes heart {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.2); }
+          100% { transform: scale(1); }
+        }
+
+        @keyframes rain {
+          0% { transform: translateY(-100px); opacity: 0; }
+          50% { opacity: 1; }
+          100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes metal {
+          0% { color: #FF3A5E; text-shadow: 0 0 5px rgba(255, 58, 94, 0.5); }
+          50% { color: #1E88E5; text-shadow: 0 0 5px rgba(30, 136, 229, 0.5); }
+          100% { color: #FF3A5E; text-shadow: 0 0 5px rgba(255, 58, 94, 0.5); }
+        }
+
+        @keyframes cosmic {
+          0% { background: linear-gradient(90deg, #FF3A5E, #1E88E5); background-clip: text; -webkit-background-clip: text; color: transparent; }
+          50% { background: linear-gradient(90deg, #1E88E5, #FFD700); background-clip: text; -webkit-background-clip: text; color: transparent; }
+          100% { background: linear-gradient(90deg, #FFD700, #FF3A5E); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // 歌词动画管理器
+    class LyricsAnimator {
+      constructor() {
+        this.sections = document.querySelectorAll('.lyrics-section');
+        this.words = document.querySelectorAll('.word');
+        this.progressBar = document.getElementById('progress-bar');
+        this.currentTime = document.getElementById('current-time');
+        this.totalTime = document.getElementById('total-time');
+        this.visualOverlay = document.getElementById('visual-overlay');
+        this.playBtn = document.getElementById('play-btn');
+        this.pauseBtn = document.getElementById('pause-btn');
+
+        this.currentSection = 0;
+        this.totalDuration = 270; // 假设歌曲时长4分30秒
+        this.currentTimeValue = 0;
+        this.isPlaying = false;
+        this.animationTimer = null;
+
+        this.setupEventListeners();
+        this.initializeWordAnimations();
+      }
+
+      setupEventListeners() {
+        this.playBtn.addEventListener('click', () => this.play());
+        this.pauseBtn.addEventListener('click', () => this.pause());
+      }
+
+      initializeWordAnimations() {
+        this.words.forEach(word => {
+          const effect = word.getAttribute('data-effect');
+
+          switch (effect) {
+            case 'wave':
+              animateWave(word);
+              break;
+            case 'pulse':
+              animatePulse(word);
+              break;
+            case 'float':
+              animateFloat(word);
+              break;
+            case 'glow':
+              animateGlow(word);
+              break;
+            case 'scale':
+              animateScale(word);
+              break;
+            case 'explode':
+              setTimeout(() => animateExplode(word), 1000);
+              break;
+            case 'shield':
+              animateShield(word);
+              break;
+            case 'stretch':
+              animateStretch(word);
+              break;
+            case 'orbit':
+              animateOrbit(word);
+              break;
+            case 'echo':
+              animateEcho(word);
+              break;
+            case 'burn':
+              animateBurn(word);
+              break;
+            case 'shatter':
+              animateShatter(word);
+              break;
+            case 'heart':
+              animateHeart(word);
+              break;
+            case 'rain':
+              animateRain(word);
+              break;
+            case 'metal':
+              animateMetal(word);
+              break;
+            case 'cosmic':
+              animateCosmic(word);
+              break;
+          }
+        });
+      }
+
+      play() {
+        if (this.isPlaying) return;
+
+        this.isPlaying = true;
+        this.playBtn.classList.add('hidden');
+        this.pauseBtn.classList.remove('hidden');
+
+        if (this.currentSection === 0) {
+          this.showSection(0);
+        }
+
+        this.animationTimer = setInterval(() => {
+          this.currentTimeValue += 1;
+          this.updateProgress();
+
+          this.checkSectionTiming();
+        }, 1000);
+      }
+
+      pause() {
+        if (!this.isPlaying) return;
+
+        this.isPlaying = false;
+        this.playBtn.classList.remove('hidden');
+        this.pauseBtn.classList.add('hidden');
+
+        clearInterval(this.animationTimer);
+      }
+
+      updateProgress() {
+        const progress = (this.currentTimeValue / this.totalDuration) * 100;
+        this.progressBar.style.width = `${progress}%`;
+
+        const minutes = Math.floor(this.currentTimeValue / 60);
+        const seconds = this.currentTimeValue % 60;
+        this.currentTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+      }
+
+      checkSectionTiming() {
+        if (this.currentTimeValue >= 0 && this.currentTimeValue < 15 && this.currentSection === 0) {
+          this.showSection(0);
+        } else if (this.currentTimeValue >= 15 && this.currentTimeValue < 45 && this.currentSection === 0) {
+          this.showSection(1);
+        } else if (this.currentTimeValue >= 45 && this.currentTimeValue < 80 && this.currentSection === 1) {
+          this.showSection(2);
+        } else if (this.currentTimeValue >= 80 && this.currentTimeValue < 115 && this.currentSection === 2) {
+          this.showSection(3);
+        } else if (this.currentTimeValue >= 115 && this.currentTimeValue < 150 && this.currentSection === 3) {
+          this.showSection(4);
+        } else if (this.currentTimeValue >= 150 && this.currentTimeValue < 200 && this.currentSection === 4) {
+          this.showSection(5);
+        } else if (this.currentTimeValue >= 200 && this.currentSection === 5) {
+          this.showSection(6);
+        }
+      }
+
+      showSection(index) {
+        if (index >= this.sections.length) return;
+
+        this.sections.forEach(section => {
+          section.classList.add('opacity-0');
+        });
+
+        const currentSection = this.sections[index];
+        currentSection.classList.remove('opacity-0');
+        currentSection.classList.add('opacity-100');
+
+        this.currentSection = index;
+
+        this.triggerVisualEffect(index);
+      }
+
+      triggerVisualEffect(sectionIndex) {
+        switch (sectionIndex) {
+          case 0:
+            this.visualOverlay.style.background = 'rgba(30, 136, 229, 0.1)';
+            this.visualOverlay.style.opacity = '0.3';
+            break;
+          case 1:
+            this.visualOverlay.style.background = 'rgba(255, 58, 94, 0.1)';
+            this.visualOverlay.style.opacity = '0.4';
+            break;
+          case 2:
+            this.visualOverlay.style.background = 'linear-gradient(90deg, rgba(255, 58, 94, 0.2), rgba(30, 136, 229, 0.2))';
+            this.visualOverlay.style.opacity = '0.5';
+            this.flashEffect(5, 300);
+            break;
+          case 3:
+            this.visualOverlay.style.background = 'rgba(255, 215, 0, 0.1)';
+            this.visualOverlay.style.opacity = '0.3';
+            break;
+          case 4:
+            this.visualOverlay.style.background = 'linear-gradient(135deg, rgba(255, 58, 94, 0.2), rgba(255, 215, 0, 0.2))';
+            this.visualOverlay.style.opacity = '0.4';
+            break;
+          case 5:
+            this.visualOverlay.style.background = 'rgba(30, 136, 229, 0.2)';
+            this.visualOverlay.style.opacity = '0.6';
+            this.flashEffect(10, 200);
+            break;
+        }
+      }
+
+      flashEffect(count, interval) {
+        let times = 0;
+        const flash = () => {
+          this.visualOverlay.style.opacity = times % 2 === 0 ? '0.8' : '0.3';
+          times++;
+
+          if (times < count * 2) {
+            setTimeout(flash, interval);
+          } else {
+            switch (this.currentSection) {
+              case 2: this.visualOverlay.style.opacity = '0.5'; break;
+              case 5: this.visualOverlay.style.opacity = '0.6'; break;
+              default: this.visualOverlay.style.opacity = '0.3';
+            }
+          }
+        };
+
+        flash();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      addKeyframeAnimations();
+
+      const lyricsAnimator = new LyricsAnimator();
+
+      setTimeout(() => {
+        document.querySelector('.lyrics-section[data-section="intro"]').classList.remove('opacity-0');
+        document.querySelector('.lyrics-section[data-section="intro"]').classList.add('opacity-100');
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
